@@ -1,14 +1,14 @@
 <template>
   <div class="category-item-category">
     <div class="category-image">
-      <router-link :to="formatCategoryPath(genre, title)"
-        ><img :src="image" :alt="imageAlt"
+      <router-link :to="'category/' + category.name.toLowerCase()"
+        ><img :src="getCategoryImagePath()" :alt="formatCategoryName()"
       /></router-link>
     </div>
     <div class="category-info">
-      <router-link :to="formatCategoryPath(genre, title)"
-        >{{ genre }}: {{ title }}</router-link
-      >
+      <router-link :to="'category/' + category.name.toLowerCase()">{{
+        formatCategoryName()
+      }}</router-link>
     </div>
   </div>
 </template>
@@ -17,30 +17,44 @@
 export default {
   name: "category-item",
   methods: {
-    formatCategoryPath(genre, title) {
+    formatCategoryName() {
+      let name = this.category.name.split(":");
+      return name[0] + ": " + name[1];
+    },
+    formatCategoryImageFilename() {
+      let name = this.category.name.split(":");
       return (
-        "/category/" +
-        encodeURIComponent(genre) +
-        "/" +
-        encodeURIComponent(title)
-      ).toLowerCase();
+        name[0].replace(" ", "").toLowerCase() +
+        "-" +
+        name[1].replace(" ", "").toLowerCase() +
+        ".png"
+      );
+    },
+    getCategoryImagePath() {
+      let images = require.context(
+        "../assets/images/categories/",
+        false,
+        /\.png$/
+      );
+
+      let image = images("./no-category-picture.png");
+
+      try {
+        image = images("./" + this.formatCategoryImageFilename());
+      } catch (e) {
+        console.log(
+          this.formatCategoryImageFilename() + " doesn't exist. Using default."
+        );
+      }
+
+      console.log(image);
+
+      return image;
     },
   },
   props: {
-    image: {
-      type: String,
-      required: true,
-    },
-    imageAlt: {
-      type: String,
-      required: true,
-    },
-    title: {
-      type: String,
-      required: true,
-    },
-    genre: {
-      type: String,
+    category: {
+      type: Object,
       required: true,
     },
   },

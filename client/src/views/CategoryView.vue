@@ -18,23 +18,19 @@
           </div>
           <div class="category-content">
             <category-item
-              v-for="(item, index) in categories"
-              v-bind:key="index"
-              :genre="item.genre"
-              :title="item.title"
-              :href="item.href"
-              :imageAlt="item.imageAlt"
-              :image="item.image"
+              v-for="category in categories"
+              :key="category.categoryId"
+              :category="category"
             ></category-item>
           </div>
-          <div class="category-more">
+          <!--<div class="category-more">
             <router-link class="button button-tertiary" to="/category"
               >More ...</router-link
             >
-          </div>
+          </div> -->
         </div>
         <div class="page-space">&nbsp;</div>
-        <div class="category-line clearfix">
+        <!-- <div class="category-line clearfix">
           <div class="category-title">
             <table class="category-table">
               <tr>
@@ -47,14 +43,7 @@
             <book-item
               v-for="(item, index) in books"
               v-bind:key="index"
-              :id="item.id"
-              :title="item.title"
-              :author="item.author"
-              :price="item.price"
-              :imageAlt="item.imageAlt"
-              :image="item.image"
-              :free-read="item.freeRead"
-              :read-path="item.readPath"
+              :category="item"
             ></book-item>
           </div>
           <div class="category-more">
@@ -62,7 +51,7 @@
               >More ...</router-link
             >
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="page-space">&nbsp;</div>
     </section>
@@ -75,16 +64,14 @@
 import AppPageTitle from "@/components/AppPageTitle";
 import CategoryVNav from "@/components/CategoryVNav";
 import CategoryItem from "@/components/CategoryItem";
-import BookItem from "@/components/BookItem";
+//import BookItem from "@/components/BookItem";
 import "@/assets/css/page-category.css";
-import fictionClassics from "../assets/images/categories/classics.png";
-import fictionMystery from "../assets/images/categories/mystery.png";
-import howToHomediy from "../assets/images/categories/homediy.png";
-import bookGaia from "../assets/images/books/gaia_garden.png";
-import bookBookcases from "../assets/images/books/bookcases_cabinets.png";
-import bookIlluminated from "../assets/images/books/computerscience_illuminated.png";
-import bookFormalFoundations from "../assets/images/books/formal_foundations_reuse.jpg";
-import bookNoPicture from "../assets/images/books/no_book_picture.png";
+//import bookGaia from "../assets/images/books/gaia_garden.png";
+//import bookBookcases from "../assets/images/books/bookcases_cabinets.png";
+//import bookIlluminated from "../assets/images/books/computerscience_illuminated.png";
+//import bookFormalFoundations from "../assets/images/books/formal_foundations_reuse.jpg";
+//import bookNoPicture from "../assets/images/books/no_book_picture.png";
+import ApiService from "@/services/ApiService";
 
 export default {
   name: "CategoryView",
@@ -92,82 +79,33 @@ export default {
     AppPageTitle,
     CategoryVNav,
     CategoryItem,
-    BookItem,
   },
   data() {
     return {
       page: {
         title: "Browse Inventory",
       },
-      categories: [
-        {
-          genre: "Fiction",
-          title: "Classics",
-          image: fictionClassics,
-          imageAlt: "Classic Fiction Canvas",
-        },
-        {
-          genre: "Fiction",
-          title: "Mystery",
-          image: fictionMystery,
-          imageAlt: "Mysterious Lamp Canvas",
-        },
-        {
-          genre: "How-To",
-          title: "Home DIY",
-          image: howToHomediy,
-          imageAlt: "Mechanical Parts Canvas",
-        },
-      ],
-      books: [
-        {
-          id: 1,
-          title: "Gaia's Garden",
-          author: "Toby Hemenway",
-          image: bookGaia,
-          imageAlt: "Gaia's Garden Floral Book Cover",
-          freeRead: false,
-          price: 9.99,
-        },
-        {
-          id: 2,
-          title: "Bookcases, Cabinets, & Built-Ins",
-          author: "Fine Woodworking (editor)",
-          image: bookBookcases,
-          imageAlt: "Bookcases Cabinets and Built-ins Book Cover",
-          freeRead: false,
-          price: 8.49,
-        },
-        {
-          id: 3,
-          title: "Computer Science Illuminated",
-          author: "Nell B Dale",
-          image: bookIlluminated,
-          imageAlt: "Computer Science Illuminated Book Cover",
-          freeRead: false,
-          price: 21.59,
-        },
-        {
-          id: 4,
-          title: "Treasure Island",
-          author: "Robert Louis Stevenson",
-          image: bookNoPicture,
-          imageAlt: "Treasure Island Book Cover",
-          freeRead: true,
-          readPath: "testPath",
-          price: 0.0,
-        },
-        {
-          id: 5,
-          title: "Formal Foundations of Reuse and Domain Engineering",
-          author: "Stephen H. Edwards, Gregory Kulczycki (Eds.)",
-          image: bookFormalFoundations,
-          imageAlt: "Formal Foundations Book Cover",
-          freeRead: false,
-          price: 42.1,
-        },
-      ],
+      categories: [],
+      books: [],
     };
+  },
+  created: function () {
+    console.log("Begin fetchCategories...");
+    this.fetchCategories();
+    console.log("End fetchCategories...");
+  },
+  methods: {
+    fetchCategories() {
+      const vm = this;
+      ApiService.fetchCategories()
+        .then((data) => {
+          console.log("Data: " + data);
+          vm.categories = data;
+        })
+        .catch((reason) => {
+          console.log("Error: " + reason);
+        });
+    },
   },
 };
 </script>

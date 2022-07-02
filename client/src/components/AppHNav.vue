@@ -8,20 +8,10 @@
           >Book Categories <font-awesome-icon icon="fa-solid fa-angle-down"
         /></router-link>
         <ul>
-          <li>
-            <router-link
-              to="../category/topcategories"
-              @click="
-                isOpen = false;
-                navigate($event);
-              "
-              >Top Categories</router-link
-            >
-          </li>
-          <li>
-            <router-link to="../category/favoritebooks"
-              >Favorite Books</router-link
-            >
+          <li v-for="category in categories" :key="category.categoryId">
+            <router-link :to="'../category/' + category.name">{{
+              category.name.replace(":", ": ")
+            }}</router-link>
           </li>
         </ul>
       </li>
@@ -34,8 +24,30 @@
 
 <script>
 import AppHNavRight from "@/components/AppHNavRight";
+import ApiService from "@/services/ApiService";
 export default {
   name: "AppHNav",
+  data: function () {
+    return { categories: [] };
+  },
+  created: function () {
+    console.log("Begin fetchCategories...");
+    this.fetchCategories();
+    console.log("End fetchCategories...");
+  },
+  methods: {
+    fetchCategories() {
+      const vm = this;
+      ApiService.fetchCategories()
+        .then((data) => {
+          console.log("Data: " + data);
+          vm.categories = data;
+        })
+        .catch((reason) => {
+          console.log("Error: " + reason);
+        });
+    },
+  },
   components: { AppHNavRight },
 };
 </script>
@@ -74,7 +86,7 @@ nav ul li a,
 nav ul li ul li a {
   display: block;
   text-decoration: none;
-  text-align: center;
+  text-align: left;
   padding-top: 8px;
   padding-bottom: 8px;
   border-bottom: 0;

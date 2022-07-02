@@ -37,6 +37,11 @@ export default {
       let val = "/book/" + bookId.toString() + "/read";
       return val.toLowerCase();
     },
+    bookImageFileName(title) {
+      let name = title.toLowerCase();
+      name = name.replace(/ /g, "-");
+      return `${name}.png`;
+    },
   },
   props: {
     id: {
